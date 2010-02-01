@@ -5,17 +5,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
 
-import jmidi.MidiPort;
-import jmidi.MidiPortException;
-
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.MidiDevice.Info;
 
 import org.burre.MIDIConduit.net.IMIDIListener;
-import org.burre.MIDIConduit.net.MIDISocket;
 import org.burre.MIDIConduit.net.MIDISocketManager;
-
-import com.sun.media.sound.*;
 
 public class MIDIRoute{
 	private Vector<MidiDevice> currOpenOutDevices = new Vector<MidiDevice>();
