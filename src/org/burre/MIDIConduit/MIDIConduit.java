@@ -23,12 +23,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.burre.MIDIConduit.MIDIRoute.MessageType;
-import org.burre.MIDIConduit.net.MIDISocketManager;
-
-import jmidi.MidiPort;
-import jmidi.MidiPortException;
-
 public class MIDIConduit{
 	private TrayIcon trayIcon;
 	private static CheckboxMenuItem[] inDeviceCBList;
@@ -69,7 +63,7 @@ public class MIDIConduit{
 	public MIDIConduit(){
 		popup = new PopupMenu();
 		tray = SystemTray.getSystemTray();
-		trayIcon = new TrayIcon(createImage("/images/bulb.gif", "tray icon"));
+		trayIcon = new TrayIcon(createImage("/images/note.png", "tray icon"));
 		route = new MIDIRoute(trayIcon);
 	}
 
