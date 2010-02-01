@@ -19,13 +19,6 @@ public class MIDISocketManager{
 	protected Vector<MIDISocket> m_openSockets = new Vector<MIDISocket>();
 	protected Vector<IMIDIListener> m_midiListers = new Vector<IMIDIListener>();
 	
-	//protected HashMap<IMIDIListener, Vector<MIDISocket>> connections = new HashMap<IMIDIListener, Vector<MIDISocket>>();
-	//protected HashMap<MIDISocket, Vector<IMIDIListener>> socketListeners = new HashMap<MIDISocket, Vector<IMIDIListener>>();
-	
-	/*public Vector<MIDISocket> getOpenSockets(){
-		return m_openSockets;
-	}*/
-	
 	public int getListenerPort(){
 		return m_port;
 	}
@@ -104,39 +97,6 @@ public class MIDISocketManager{
 		for(MIDISocket socket: m_openSockets){
 			socket.register(listener);
 		}
-		
-//		if(m_openSockets.contains(socket) == false){
-//			return false;
-//		}
-//		
-//		// Register the socket to the listener
-//		if(connections.containsKey(listener)){
-//			Vector<MIDISocket> sockets = connections.get(listener);
-//			if(sockets.contains(socket) == false){
-//				
-//				sockets.add(socket);
-//			}
-//		}else{
-//			Vector<MIDISocket> sockets = new Vector<MIDISocket>();
-//			sockets.add(socket);
-//			connections.put(listener, sockets);
-//		}
-		
-		//----------------------------
-		
-		// The reverse collection
-		// Used for checking what listeners that listens to what socket
-//		if(socketListeners.containsKey(socket)){
-//			Vector<IMIDIListener> listeners = socketListeners.get(socket);
-//			if(listeners.contains(listener) == false){
-//				listeners.add(listener);
-//			}
-//		}else{
-//			Vector<IMIDIListener> listeners = new Vector<IMIDIListener>();
-//			listeners.add(listener);
-//			socketListeners.put(socket, listeners);
-//		}
-//		return true;
 	}
 	
 	public void unregister(IMIDIListener listener){
@@ -144,15 +104,5 @@ public class MIDISocketManager{
 		for(MIDISocket socket: m_openSockets){
 			socket.unregister(listener);
 		}
-//		Vector<MIDISocket> sockets = connections.remove(listener);
-//		
-//		for(MIDISocket socket: sockets){
-//		 //Vector<IMIDIListener> listeners = socketListeners.remove(socket);
-//		 //for(IMIDIListener socketListener: listeners){
-//			 socket.unregister(listener /*socketListener*/);
-//		 //}
-//		 //listeners.clear();
-//		}
-//		sockets.clear();
 	}
 }
