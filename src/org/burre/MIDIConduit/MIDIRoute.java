@@ -17,10 +17,10 @@ import org.burre.MIDIConduit.net.IMIDIListener;
 import org.burre.MIDIConduit.net.MIDISocketManager;
 
 public class MIDIRoute{
-	private Vector<MidiDevice> currOpenOutDevices = new Vector<MidiDevice>();
-	private Vector<MidiDevice> currOpenInDevices = new Vector<MidiDevice>();
-	private Vector<Info> inDevices = new Vector<Info>();
-	private Vector<Info> outDevices = new Vector<Info>();
+	private Vector<MidiDevice> m_currOpenOutDevices = new Vector<MidiDevice>();
+	private Vector<MidiDevice> m_currOpenInDevices = new Vector<MidiDevice>();
+	private Vector<Info> m_inDevices = new Vector<Info>();
+	private Vector<Info> m_outDevices = new Vector<Info>();
 
 	public final int MIDI_SOCKET_DEVICE_NR = -1;
 	private MIDISocketManager m_midiSocketMgr;
@@ -38,12 +38,12 @@ public class MIDIRoute{
 		}
 	};
 
-	private HashMap<Info, MidiDevice> infoDeviceMap = new HashMap<Info, MidiDevice>();
+	private HashMap<Info, MidiDevice> m_infoDeviceMap = new HashMap<Info, MidiDevice>();
 
-	private TrayIcon trayIcon;
+	private TrayIcon m_trayIcon;
 
-	private int selectedInDevice = 0;
-	private int selectedOutDevice = 0;
+	private int m_selectedInDevice = 0;
+	private int m_selectedOutDevice = 0;
 
 	public static enum MessageType{
 		NOTE_ON(0x90), NOTE_OFF(0x80), CC(0xB0);
@@ -64,36 +64,36 @@ public class MIDIRoute{
 	}
 
 	public void setSelectedOutDevice(int devNr){
-		closeMIDIOutDevice(selectedOutDevice);
-		selectedOutDevice = devNr;
-		openMIDIOutput(selectedOutDevice);
+		closeMIDIOutDevice(m_selectedOutDevice);
+		m_selectedOutDevice = devNr;
+		openMIDIOutput(m_selectedOutDevice);
 	}
 
 	public int getSelectedOutDevice(){
-		return selectedOutDevice;
+		return m_selectedOutDevice;
 	}
 
 	public void setSelectedInDevice(int devNr){
-		closeMIDIInDevice(selectedInDevice);
-		selectedInDevice = devNr;
-		openMIDIInput(selectedInDevice);
+		closeMIDIInDevice(m_selectedInDevice);
+		m_selectedInDevice = devNr;
+		openMIDIInput(m_selectedInDevice);
 	}
 
 	public int getSelectedInDevice(){
-		return selectedInDevice;
+		return m_selectedInDevice;
 	}
 
 	public Vector<Info> getOutDevices(){
-		return outDevices;
+		return m_outDevices;
 	}
 
 	public Vector<Info> getInDevices(){
 		// TODO Auto-generated method stub
-		return inDevices;
+		return m_inDevices;
 	}
 
 	public MIDIRoute(TrayIcon parent){
-		trayIcon = parent;
+		m_trayIcon = parent;
 		enumerateDevices();
 		try{
 			m_midiSocketMgr = new MIDISocketManager(6666);
@@ -110,9 +110,9 @@ public class MIDIRoute{
 		for(int i = 0; i < deviceInfoArr.length; i++){
 			try{
 				if(MidiSystem.getMidiDevice(deviceInfoArr[i]).getMaxTransmitters() != 0 /*name.contains("MidiInDeviceProvider")*/){
-					inDevices.add(deviceInfoArr[i]);
+					m_inDevices.add(deviceInfoArr[i]);
 				}else if(MidiSystem.getMidiDevice(deviceInfoArr[i]).getMaxReceivers() != 0 /*name.contains("MidiOutDeviceProvider")*/){
-					outDevices.add(deviceInfoArr[i]);
+					m_outDevices.add(deviceInfoArr[i]);
 				}else{
 					System.out.println("Unknown device type: " + deviceInfoArr[i]);
 				}
@@ -123,7 +123,7 @@ public class MIDIRoute{
 	}
 
 	public void openMIDIInput(int deviceNr){
-		if(deviceNr == inDevices.size()/* MIDI_SOCKET_DEVICE_NR*/){
+		if(deviceNr == m_inDevices.size()/* MIDI_SOCKET_DEVICE_NR*/){
 			System.out.println("Opening MIDI Socket at port: "
 				+ m_midiSocketMgr.getListenerPort());
 			// Connect to a MIDISocket instead of a device
@@ -132,17 +132,17 @@ public class MIDIRoute{
 		}else{
 			try{
 				System.out.println("Fetching input device #" + deviceNr + ": "
-					+ inDevices.elementAt(deviceNr).getName());
-				MidiDevice device = MidiSystem.getMidiDevice(inDevices.elementAt(deviceNr));
+					+ m_inDevices.elementAt(deviceNr).getName());
+				MidiDevice device = MidiSystem.getMidiDevice(m_inDevices.elementAt(deviceNr));
 				System.out.println("Opening port");
 				device.open();
 
-				currOpenInDevices.add(device);
-				infoDeviceMap.put(inDevices.elementAt(deviceNr), device);
+				m_currOpenInDevices.add(device);
+				m_infoDeviceMap.put(m_inDevices.elementAt(deviceNr), device);
 
 				System.out.println("Done!");
 			}catch(MidiUnavailableException e){
-				showErrDialog(trayIcon, e.getMessage());
+				showErrDialog(m_trayIcon, e.getMessage());
 			}
 		}
 	}
@@ -150,25 +150,25 @@ public class MIDIRoute{
 	public void openMIDIOutput(int deviceNr){
 		try{
 			System.out.println("Fetching output device #" + deviceNr + ": "
-				+ outDevices.elementAt(deviceNr).getName());
-			MidiDevice device = MidiSystem.getMidiDevice(outDevices.elementAt(deviceNr));
+				+ m_outDevices.elementAt(deviceNr).getName());
+			MidiDevice device = MidiSystem.getMidiDevice(m_outDevices.elementAt(deviceNr));
 			System.out.println("Opening port");
 			device.open();
 
-			currOpenOutDevices.add(device);
-			infoDeviceMap.put(outDevices.elementAt(deviceNr), device);
+			m_currOpenOutDevices.add(device);
+			m_infoDeviceMap.put(m_outDevices.elementAt(deviceNr), device);
 
 			System.out.println("Done!");
 		}catch(MidiUnavailableException e){
-			showErrDialog(trayIcon, e.getMessage());
+			showErrDialog(m_trayIcon, e.getMessage());
 		}
 	}
 
 	public void writeMIDIMessage(int command, byte channel, byte data1,
 		byte data2){
 		try{
-			for(int i = 0; i < currOpenOutDevices.size(); i++){
-				Receiver recv = currOpenOutDevices.elementAt(i).getReceiver();
+			for(int i = 0; i < m_currOpenOutDevices.size(); i++){
+				Receiver recv = m_currOpenOutDevices.elementAt(i).getReceiver();
 
 				ShortMessage msg = new ShortMessage();
 
@@ -180,9 +180,9 @@ public class MIDIRoute{
 					+ ", data2: " + data2);
 			}
 		}catch(InvalidMidiDataException e){
-			showErrDialog(trayIcon, e.getMessage());
+			showErrDialog(m_trayIcon, e.getMessage());
 		}catch(MidiUnavailableException e){
-			showErrDialog(trayIcon, e.getMessage());
+			showErrDialog(m_trayIcon, e.getMessage());
 		}
 	}
 
@@ -195,12 +195,12 @@ public class MIDIRoute{
 			m_midiSocketMgr.unregister(m_socketListener);
 		}else{
 			System.out.println("Closing port");
-			Info devInfo = inDevices.elementAt(deviceNr);
+			Info devInfo = m_inDevices.elementAt(deviceNr);
 
-			MidiDevice device = infoDeviceMap.get(devInfo);
+			MidiDevice device = m_infoDeviceMap.get(devInfo);
 			//infoDeviceMap.remove(devInfo);
 
-			if(currOpenInDevices.remove(device)){
+			if(m_currOpenInDevices.remove(device)){
 				device.close();
 			}
 		}
@@ -210,12 +210,12 @@ public class MIDIRoute{
 
 	public void closeMIDIOutDevice(int deviceNr){
 		System.out.println("Closing port");
-		Info devInfo = outDevices.elementAt(deviceNr);
+		Info devInfo = m_outDevices.elementAt(deviceNr);
 
-		MidiDevice device = infoDeviceMap.get(devInfo);
+		MidiDevice device = m_infoDeviceMap.get(devInfo);
 		//infoDeviceMap.remove(devInfo);
 
-		if(currOpenOutDevices.remove(device)){
+		if(m_currOpenOutDevices.remove(device)){
 			device.close();
 		}
 		//System.out.println("Done!");
