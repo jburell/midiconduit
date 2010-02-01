@@ -198,14 +198,11 @@ public class MIDIRoute{
 			Info devInfo = m_inDevices.elementAt(deviceNr);
 
 			MidiDevice device = m_infoDeviceMap.get(devInfo);
-			//infoDeviceMap.remove(devInfo);
 
 			if(m_currOpenInDevices.remove(device)){
 				device.close();
 			}
 		}
-
-		//System.out.println("Done!");
 	}
 
 	public void closeMIDIOutDevice(int deviceNr){
@@ -213,12 +210,10 @@ public class MIDIRoute{
 		Info devInfo = m_outDevices.elementAt(deviceNr);
 
 		MidiDevice device = m_infoDeviceMap.get(devInfo);
-		//infoDeviceMap.remove(devInfo);
 
 		if(m_currOpenOutDevices.remove(device)){
 			device.close();
 		}
-		//System.out.println("Done!");
 	}
 
 	public static void showErrDialog(TrayIcon trayIcon, String message){

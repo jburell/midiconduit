@@ -32,7 +32,7 @@ public class MIDIConduit{
 	public MIDIRoute m_route;
 
 	public static void main(String[] args){
-		/* Use an appropriate Look and Feel */
+		// Use an appropriate Look and Feel
 		try{
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			// UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -46,7 +46,7 @@ public class MIDIConduit{
 			ex.printStackTrace();
 		}
 
-		/* Turn off metal's use of bold fonts */
+		// Turn off metal's use of bold fonts
 		UIManager.put("swing.boldMetal", Boolean.FALSE);
 
 		final MIDIConduit conduit = new MIDIConduit();
@@ -74,10 +74,9 @@ public class MIDIConduit{
 			if(cb1Id == ItemEvent.SELECTED){
 				Menu menu = ((Menu)((CheckboxMenuItem)e.getSource()).getParent());
 				int itemCount = menu.getItemCount();
-				for(int i = 0; i < itemCount/*inDeviceCBList.length*/; i++){
+				for(int i = 0; i < itemCount; i++){
 					if(menu.getItem(i).getLabel() != e.getItem().toString()){
 						((CheckboxMenuItem)menu.getItem(i)).setState(false);
-					//inDeviceCBList[i].setState(false);
 					}else{
 						if(menu.getLabel() == "Output"){
 							m_route.setSelectedOutDevice(i);
@@ -122,8 +121,6 @@ public class MIDIConduit{
 	public static void createAndShowGUI(MIDIConduit conduit){
 		Vector<Info> inDevices = conduit.m_route.getInDevices();
 		Vector<Info> outDevices = conduit.m_route.getOutDevices();
-
-		//openMIDI();
 
 		// Check the SystemTray support
 		if(!SystemTray.isSupported()){
@@ -189,9 +186,7 @@ public class MIDIConduit{
 		});
 
 		ActionListener listener = conduit.new TestOperationActionListener();
-
 		midiItem.addActionListener(listener);
-
 		exitItem.addActionListener(conduit.new ExitActionListener());
 	}
 

@@ -11,7 +11,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
 public class MIDISocket {
-	MIDISocketManager m_parent;
 	InputStream m_inputStream;
 	OutputStream m_outputStream;
 	Socket m_socket;
@@ -23,8 +22,7 @@ public class MIDISocket {
 		return m_midiInputListeners;
 	}
 	
-	public MIDISocket(/*MIDISocketManager manager,*/ Socket socket) throws IOException{
-		//m_parent = manager;
+	public MIDISocket(Socket socket) throws IOException{
 		m_socket = socket;
 		m_inputStream = m_socket.getInputStream();
 		
